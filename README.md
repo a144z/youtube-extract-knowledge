@@ -9,9 +9,10 @@ A Chrome extension that enhances YouTube learning by providing AI-powered explan
 ### 📚 **Knowledge Mode**
 - **AI Explanations**: Get detailed explanations of YouTube captions using configurable AI models
 - **Multiple Output Formats**: 
-  - Definitions (detailed explanations)
-  - Diagrams (visual representations)
-  - Knowledge Graphs (interactive node-edge visualizations)
+  - **Definitions**: Detailed explanations of key terms and concepts
+  - **Diagrams**: Visual representations of concepts and relationships
+  - **Graphs**: Interactive knowledge graphs with nodes and edges
+  - **Explore**: Creative discovery of hidden connections and novel insights
 
 ### 🎯 **Interactive Graph Visualization**
 - **Real-time Graph Rendering**: Live D3.js visualization of knowledge graphs
@@ -134,7 +135,7 @@ Example Ollama configuration:
 3. **Navigate to YouTube**: Go to any YouTube video
 4. **Enable Knowledge Mode**: Click inside the Youtube player toggle "Knowledge Mode"(next to Caption button after installed)
 5. **View Explanations**: Captions will be processed and displayed in the floating bubble
-6. **Switch Modes**: Use the mode selector to switch between definitions, diagrams, and graphs
+6. **Switch Modes**: Use the mode selector to switch between definitions, diagrams, graphs, and explore modes
 
 *Note: Do not turn off caption, this extension require caption to be on
 
@@ -149,6 +150,17 @@ Example Ollama configuration:
    - **Cluster**: Use ● button to group nodes closer
    - **Spread**: Use ○ button to spread nodes apart
    - **Reset**: Use ⌂ to reset view or ↻ to restart
+
+### Explore Mode
+
+1. **Select Explore Mode**: Choose "🔍 Explore" from the mode selector
+2. **Discover Hidden Connections**: AI analyzes the transcript to find:
+   - **Key Concepts**: Main ideas and terms from the content
+   - **Hidden Connections**: Indirect relationships and patterns
+   - **Novel Insights**: New ideas and perspectives that emerge
+   - **Cross-Domain Links**: Connections to other fields and disciplines
+   - **Exploration Questions**: Thought-provoking questions for deeper investigation
+3. **Creative Thinking**: The AI acts as a polymath, detective, and creative thinker to help you discover connections you never considered
 
 ### Manual Graph Push
 
@@ -295,9 +307,9 @@ This project has excellent potential for brainstorming and expanding into a comp
 
 ### 🎨 **UI/UX Improvements**
 
-#### 1. **Clean Up Graph UI in Extension Bubble**
-- **Current State**: Basic graph display in floating bubble
-- **Planned Improvements**:
+#### 1. **Clean Up Graph UI in Extension Bubble** ✅ **COMPLETED**
+- **Current State**: Enhanced graph display with interactive controls and new Explore mode
+- **Completed Improvements**:
   - **Interactive Graph Controls**: Add zoom, pan, and node manipulation directly in the bubble
   - **Graph Modes**: Toggle between different visualization styles (force-directed, hierarchical, circular)
   - **Node Styling**: Color-code nodes by type (concepts, people, events, etc.)
@@ -306,6 +318,7 @@ This project has excellent potential for brainstorming and expanding into a comp
   - **Export Options**: Save graph as image or export to various formats
   - **Graph Search**: Search within the graph to find specific nodes
   - **Graph Statistics**: Show node count, edge count, and connectivity metrics
+  - **🆕 Explore Mode**: Creative discovery of hidden connections and novel insights
 
 ### 🔗 **Integration & API Support**
 

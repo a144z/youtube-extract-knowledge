@@ -86,7 +86,8 @@ const BubbleModule = (function() {
     const modeOptions = [
       { value: 'definitions', text: '📚 Definitions' },
       { value: 'diagram', text: '🔗 Diagram' },
-      { value: 'graph', text: '🔗 Graph' }
+      { value: 'graph', text: '🕸️ Graph' },
+      { value: 'explore', text: '🔍 Explore' }
     ];
     
     modeOptions.forEach(opt => {

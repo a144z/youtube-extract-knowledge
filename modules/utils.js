@@ -22,6 +22,35 @@ Transcript:`,
 Transcript:`,
       renderer: renderGraph,
     },
+    explore: {
+      name: 'Explore',
+      prompt: `You are an expert knowledge explorer and creative connector. Your task is to analyze this transcript and discover hidden connections, novel ideas, and unexpected relationships that most people would miss.
+
+**Your Mission:**
+1. **Identify Key Concepts**: Extract the main ideas, terms, and concepts from the transcript
+2. **Find Hidden Connections**: Look for indirect relationships, patterns, and connections that aren't immediately obvious
+3. **Generate Novel Insights**: Suggest new ideas, perspectives, or applications that emerge from combining these concepts
+4. **Cross-Domain Thinking**: Connect ideas from different fields, disciplines, or contexts
+5. **Question Assumptions**: Challenge conventional thinking and explore alternative interpretations
+
+**Output Format:**
+- **Key Concepts**: List the main ideas and terms
+- **Hidden Connections**: Describe indirect relationships and patterns you discover
+- **Novel Insights**: Present new ideas or perspectives that emerge
+- **Cross-Domain Links**: Connect to other fields, disciplines, or contexts
+- **Exploration Questions**: Pose thought-provoking questions for deeper investigation
+
+**Think Like:**
+- A polymath connecting ideas across disciplines
+- A detective finding clues others miss
+- A creative thinker making unexpected associations
+- A researcher discovering new research directions
+
+Be bold, creative, and insightful. Look beyond the obvious and help the reader discover connections they never considered.
+
+Transcript:`,
+      renderer: renderExplore,
+    },
   };
 
   function cleanCaptionText(text) {
@@ -159,6 +188,94 @@ Transcript:`,
     } else {
       container.textContent = 'No graph data available.';
     }
+  }
+
+  function renderExplore(data, container) {
+    container.innerHTML = '';
+
+    if (typeof data === 'string') {
+      const exploreDiv = document.createElement('div');
+      exploreDiv.className = 'explore-content';
+      exploreDiv.style.fontSize = '14px';
+      exploreDiv.style.lineHeight = '1.5';
+      exploreDiv.style.maxHeight = '400px';
+      exploreDiv.style.overflowY = 'auto';
+
+      // Parse the structured exploration content
+      const sections = parseExploreContent(data);
+      
+      sections.forEach(section => {
+        const sectionDiv = document.createElement('div');
+        sectionDiv.style.marginBottom = '16px';
+        
+        const titleDiv = document.createElement('div');
+        titleDiv.style.fontWeight = 'bold';
+        titleDiv.style.color = '#2563eb';
+        titleDiv.style.marginBottom = '8px';
+        titleDiv.style.fontSize = '15px';
+        titleDiv.textContent = section.title;
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.style.marginLeft = '12px';
+        contentDiv.style.whiteSpace = 'pre-line';
+        contentDiv.textContent = section.content;
+        
+        sectionDiv.appendChild(titleDiv);
+        sectionDiv.appendChild(contentDiv);
+        exploreDiv.appendChild(sectionDiv);
+      });
+
+      container.appendChild(exploreDiv);
+    } else {
+      container.textContent = 'No exploration data available.';
+    }
+  }
+
+  function parseExploreContent(text) {
+    const sections = [];
+    const lines = text.split('\n');
+    let currentSection = null;
+    
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      
+      // Check if this is a section header
+      if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+        // Save previous section
+        if (currentSection) {
+          sections.push(currentSection);
+        }
+        
+        // Start new section
+        currentSection = {
+          title: trimmedLine.replace(/\*\*/g, ''),
+          content: ''
+        };
+      } else if (trimmedLine.startsWith('- **') && trimmedLine.includes('**:')) {
+        // Handle formatted subsections like "- **Key Concepts**:"
+        if (currentSection) {
+          currentSection.content += trimmedLine + '\n';
+        }
+      } else if (trimmedLine && currentSection) {
+        // Add content to current section
+        currentSection.content += trimmedLine + '\n';
+      }
+    }
+    
+    // Add the last section
+    if (currentSection) {
+      sections.push(currentSection);
+    }
+    
+    // If no structured sections found, create a single section with all content
+    if (sections.length === 0) {
+      sections.push({
+        title: 'Exploration Insights',
+        content: text
+      });
+    }
+    
+    return sections;
   }
 
   function parseTuples(text) {
