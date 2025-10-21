@@ -129,10 +129,14 @@ Example Ollama configuration:
 
 ### Basic Usage
 
-1. **Navigate to YouTube**: Go to any YouTube video
-2. **Enable Knowledge Mode**: Click the extension icon and toggle "Knowledge Mode"
-3. **View Explanations**: Captions will be processed and displayed in the floating bubble
-4. **Switch Modes**: Use the mode selector to switch between definitions, diagrams, and graphs
+1. **Enable extension**: Toggle on
+2. **Add AI API URL**: Configure your API link
+3. **Navigate to YouTube**: Go to any YouTube video
+4. **Enable Knowledge Mode**: Click inside the Youtube player toggle "Knowledge Mode"(next to Caption button after installed)
+5. **View Explanations**: Captions will be processed and displayed in the floating bubble
+6. **Switch Modes**: Use the mode selector to switch between definitions, diagrams, and graphs
+
+*Note: Do not turn off caption, this extension require caption to be on
 
 ### Graph Visualization
 
