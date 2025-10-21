@@ -15,7 +15,7 @@ Transcript:`,
 Transcript:`,
       renderer: renderDiagram,
     },
-    emoji: {
+    graph: {
       name: 'Graph',
       prompt: `Extract knowledge graph triples from this transcript in the format (subject,predicate,object). For example: (electricity,cuts,5_minutes) (people,not_back_on,rescheduling). Only output the top 20 triples in this exact format, one per line, give me nothing else in the result.
 
@@ -163,18 +163,27 @@ Transcript:`,
 
   function parseTuples(text) {
     const tuples = [];
-    // Match patterns like (node1,edge,node2) or (node1, edge, node2)
-    const tupleRegex = /\(([^,]+),([^,]+),([^)]+)\)/g;
+    // Enhanced regex to handle complex node names with underscores, spaces, and special characters
+    // Match patterns like (node1,edge,node2) with better handling of complex names
+    const tupleRegex = /\(([^,]+?),\s*([^,]+?),\s*([^)]+)\)/g;
     let match;
     
     while ((match = tupleRegex.exec(text)) !== null) {
-      tuples.push({
-        from: match[1].trim(),
-        edge: match[2].trim(),
-        to: match[3].trim()
-      });
+      const from = match[1].trim();
+      const edge = match[2].trim();
+      const to = match[3].trim();
+      
+      // Skip empty or invalid tuples
+      if (from && edge && to && from !== '' && edge !== '' && to !== '') {
+        tuples.push({
+          from: from,
+          edge: edge,
+          to: to
+        });
+      }
     }
     
+    console.log(`Parsed ${tuples.length} tuples from text:`, tuples);
     return tuples;
   }
 
@@ -651,6 +660,27 @@ Transcript:`,
     });
   }
 
+  // Test function to verify tuple parsing
+  function testTupleParsing() {
+    const testData = `(philosopher,teaches,understanding_of_reality)
+(reality,is_not_an_objective_factor,is_subjective)
+(time,does_not_exist_outside_of_perception)
+(space,does_not_exist_outside_of_perception)
+(senses,distort_and_filter_perception)
+(perception,transforms_reality_into_processable_form)
+(example_concepts,time_and_space,are_not_objective)
+(knowledge_graph,includes,subjective_noumena)
+(reality_is_constructed_by_perception,is_correct)
+(philosopher_taught,reality_involves_time_and_space)`;
+    
+    console.log('Testing tuple parsing with sample data:');
+    console.log('Input:', testData);
+    const result = parseTuples(testData);
+    console.log('Parsed result:', result);
+    console.log(`Successfully parsed ${result.length} tuples`);
+    return result;
+  }
+
   return {
     systemPrompts,
     cleanCaptionText,
@@ -659,6 +689,7 @@ Transcript:`,
     renderDiagram,
     renderGraph,
     parseTuples,
+    testTupleParsing,
     createVisualGraph,
     calculateForceDirectedLayout,
     addGraphInteractions,

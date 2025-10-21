@@ -86,7 +86,7 @@ const BubbleModule = (function() {
     const modeOptions = [
       { value: 'definitions', text: '📚 Definitions' },
       { value: 'diagram', text: '🔗 Diagram' },
-      { value: 'emoji', text: '🔗 Graph' }
+      { value: 'graph', text: '🔗 Graph' }
     ];
     
     modeOptions.forEach(opt => {
@@ -364,7 +364,7 @@ const BubbleModule = (function() {
     `;
 
     // If current mode is graph, append a separate graph section below AI analysis
-    const isGraphMode = (batchData.promptKey || ExtensionState.currentPrompt) === 'emoji';
+    const isGraphMode = (batchData.promptKey || ExtensionState.currentPrompt) === 'graph';
     if (isGraphMode) {
       const sectionContent = batchDiv.querySelector('.section-content');
       if (sectionContent) {
@@ -381,6 +381,14 @@ const BubbleModule = (function() {
           </div>
           <div class="section-content expanded">
             <div class="graph-container"></div>
+            <div class="graph-controls" style="margin-top: 10px; text-align: center;">
+              <button class="control-btn" id="pushGraphBtn" style="font-size: 12px; padding: 6px 12px;" title="Push Graph Data to Server (works even if auto-push is disabled)">
+                📤 Push Graph Data
+              </button>
+              <button class="control-btn" id="testParsingBtn" style="font-size: 12px; padding: 6px 12px; margin-left: 5px;" title="Test raw AI content push to server">
+                🧪 Test Push
+              </button>
+            </div>
           </div>
         `;
         sectionContent.appendChild(graphSection);
@@ -389,6 +397,73 @@ const BubbleModule = (function() {
         const graphContainer = graphSection.querySelector('.graph-container');
         if (graphContainer) {
           UtilsModule.renderGraph(batchData.content, graphContainer);
+        }
+        
+        // Add push button functionality
+        const pushBtn = graphSection.querySelector('#pushGraphBtn');
+        if (pushBtn) {
+          pushBtn.addEventListener('click', async () => {
+            pushBtn.disabled = true;
+            pushBtn.textContent = 'Pushing...';
+            
+            try {
+              await GraphPushModule.pushGraphData(batchData.content, {
+                batchId: batchData.batchId,
+                captionCount: batchData.captionCount,
+                promptName: batchData.promptName
+              }, true); // forcePush = true for manual push
+              pushBtn.textContent = '✅ Pushed!';
+              setTimeout(() => {
+                pushBtn.textContent = '📤 Push Graph Data';
+                pushBtn.disabled = false;
+              }, 2000);
+            } catch (error) {
+              console.error('Error pushing graph data:', error);
+              pushBtn.textContent = '❌ Failed';
+              pushBtn.title = `Error: ${error.message}`;
+              setTimeout(() => {
+                pushBtn.textContent = '📤 Push Graph Data';
+                pushBtn.title = 'Push Graph Data to Server';
+                pushBtn.disabled = false;
+              }, 3000);
+            }
+          });
+        }
+        
+        // Add test parsing button functionality
+        const testBtn = graphSection.querySelector('#testParsingBtn');
+        if (testBtn) {
+          testBtn.addEventListener('click', () => {
+            console.log('Testing raw AI content push...');
+            // Test with sample AI content
+            const sampleContent = `(class,topic,first_class)
+(learning,semester_framework,provided_framework)
+(ideas,connection_to_understanding,important_for_attention)
+(teacher,addresses_kant,Emmanuel_Kant)
+(philosopher,history_category,western_history)
+(knowledge,connected_to,learning_process)
+(confusion,prompts_action,ask_question)
+(clarity_in_learning,enhances_mastery,learn_more)
+(questions_encourage_deeper_engagement,habit_formation,student_behavior)
+(knowledge_graph,structure_type,triples_format)`;
+            
+            GraphPushModule.pushGraphData(sampleContent, {
+              batchId: 'test',
+              captionCount: 1,
+              promptName: 'test-prompt'
+            }, true).then(() => {
+              testBtn.textContent = '✅ Test Sent!';
+              setTimeout(() => {
+                testBtn.textContent = '🧪 Test Push';
+              }, 3000);
+            }).catch(error => {
+              console.error('Test push failed:', error);
+              testBtn.textContent = '❌ Test Failed';
+              setTimeout(() => {
+                testBtn.textContent = '🧪 Test Push';
+              }, 3000);
+            });
+          });
         }
       }
     }

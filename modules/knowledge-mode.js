@@ -78,6 +78,16 @@ const KnowledgeModeModule = (function() {
       BubbleModule.displayBatchResults(batchData);
       BubbleModule.updateStatus('complete', `Batch ${batchId} complete`);
 
+      // Push graph data if it's graph mode and push is enabled
+      if (ExtensionState.currentPrompt === 'graph' && SettingsModule.isGraphPushEnabled()) {
+        console.log('Pushing graph data for batch', batchId);
+        await GraphPushModule.pushGraphData(contentText, {
+          batchId: batchId,
+          captionCount: captionCount,
+          promptName: selectedPrompt.name
+        });
+      }
+
       console.log(`✅ Batch ${batchId} processed successfully`);
 
     } catch (error) {

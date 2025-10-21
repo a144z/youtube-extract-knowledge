@@ -20,6 +20,7 @@
         "modules/bubble.js",
         "modules/caption.js",
         "modules/knowledge-mode.js",
+        "modules/graph-push.js",
         "modules/transcript.js",
         "modules/ui-controls.js",
         "modules/core.js",

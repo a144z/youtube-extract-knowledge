@@ -282,6 +282,44 @@
                 </div>
             </div>
             
+            <div class="setting-group">
+                <div class="setting-title">Graph Data Sharing</div>
+                <div class="setting-description">
+                    Automatically push knowledge graph data to a central server for collaborative learning and analysis.
+                </div>
+                
+                <div class="toggle-container">
+                    <div class="toggle" id="graphPushToggle">
+                        <div class="toggle-slider"></div>
+                    </div>
+                    <span class="toggle-label" id="graphPushLabel">Auto-push Graph Data</span>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label" for="graphPushUrl">Graph Push API URL</label>
+                    <input type="url" id="graphPushUrl" class="input-field" placeholder="https://your-server.com/api/graph-data">
+                    <div class="input-help">
+                        Enter the URL where graph data should be sent. The extension will POST JSON data containing nodes, edges, and metadata.
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label" for="graphPushApiKey">API Key (Optional)</label>
+                    <input type="password" id="graphPushApiKey" class="input-field" placeholder="your-api-key">
+                    <div class="input-help">
+                        Optional API key for authentication. Leave empty if your server doesn't require authentication.
+                    </div>
+                </div>
+                
+                <div class="test-section">
+                    <div class="setting-description" style="margin-bottom: 10px;">
+                        Test your graph push configuration.
+                    </div>
+                    <button class="test-button" id="testGraphPushBtn">Test Graph Push</button>
+                    <div id="testGraphPushResult" style="margin-top: 10px; font-size: 12px;"></div>
+                </div>
+            </div>
+            
             <div class="button-group">
                 <button class="btn btn-primary" id="saveBtn">Save Settings</button>
                 <button class="btn btn-secondary" id="resetBtn">Reset to Defaults</button>

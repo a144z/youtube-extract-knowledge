@@ -2,11 +2,15 @@
 const DEFAULT_SETTINGS = {
     extensionEnabled: true,
     apiUrl: 'http://localhost:11434/api/chat',
-    apiModel: 'hf.co/LiquidAI/LFM2-8B-A1B-GGUF:LFM2-8B-A1B-Q4_0.gguf'
+    apiModel: 'hf.co/LiquidAI/LFM2-8B-A1B-GGUF:LFM2-8B-A1B-Q4_0.gguf',
+    graphPushEnabled: false,
+    graphPushUrl: '',
+    graphPushApiKey: ''
 };
 
 // DOM elements
 let extensionToggle, extensionLabel, apiUrlInput, apiModelInput, saveBtn, resetBtn, testApiBtn, statusMessage, testResult;
+let graphPushToggle, graphPushLabel, graphPushUrlInput, graphPushApiKeyInput, testGraphPushBtn, testGraphPushResult;
 
 // Initialize the options page
 document.addEventListener('DOMContentLoaded', function() {
@@ -25,6 +29,14 @@ function initializeElements() {
     testApiBtn = document.getElementById('testApiBtn');
     statusMessage = document.getElementById('statusMessage');
     testResult = document.getElementById('testResult');
+    
+    // Graph push elements
+    graphPushToggle = document.getElementById('graphPushToggle');
+    graphPushLabel = document.getElementById('graphPushLabel');
+    graphPushUrlInput = document.getElementById('graphPushUrl');
+    graphPushApiKeyInput = document.getElementById('graphPushApiKey');
+    testGraphPushBtn = document.getElementById('testGraphPushBtn');
+    testGraphPushResult = document.getElementById('testGraphPushResult');
 }
 
 function setupEventListeners() {
@@ -32,6 +44,12 @@ function setupEventListeners() {
     extensionToggle.addEventListener('click', function() {
         extensionToggle.classList.toggle('active');
         updateExtensionLabel();
+    });
+    
+    // Graph push toggle
+    graphPushToggle.addEventListener('click', function() {
+        graphPushToggle.classList.toggle('active');
+        updateGraphPushLabel();
     });
     
     // Save button
@@ -42,6 +60,9 @@ function setupEventListeners() {
     
     // Test API button
     testApiBtn.addEventListener('click', testApiConnection);
+    
+    // Test graph push button
+    testGraphPushBtn.addEventListener('click', testGraphPushConnection);
 }
 
 function loadSettings() {
@@ -54,9 +75,21 @@ function loadSettings() {
         }
         updateExtensionLabel();
         
+        // Set graph push toggle
+        if (items.graphPushEnabled) {
+            graphPushToggle.classList.add('active');
+        } else {
+            graphPushToggle.classList.remove('active');
+        }
+        updateGraphPushLabel();
+        
         // Set API settings
         apiUrlInput.value = items.apiUrl || DEFAULT_SETTINGS.apiUrl;
         apiModelInput.value = items.apiModel || DEFAULT_SETTINGS.apiModel;
+        
+        // Set graph push settings
+        graphPushUrlInput.value = items.graphPushUrl || DEFAULT_SETTINGS.graphPushUrl;
+        graphPushApiKeyInput.value = items.graphPushApiKey || DEFAULT_SETTINGS.graphPushApiKey;
     });
 }
 
@@ -65,16 +98,30 @@ function updateExtensionLabel() {
     extensionLabel.textContent = isEnabled ? 'Extension Enabled' : 'Extension Disabled';
 }
 
+function updateGraphPushLabel() {
+    const isEnabled = graphPushToggle.classList.contains('active');
+    graphPushLabel.textContent = isEnabled ? 'Auto-push Enabled' : 'Auto-push Disabled';
+}
+
 function saveSettings() {
     const settings = {
         extensionEnabled: extensionToggle.classList.contains('active'),
         apiUrl: apiUrlInput.value.trim(),
-        apiModel: apiModelInput.value.trim()
+        apiModel: apiModelInput.value.trim(),
+        graphPushEnabled: graphPushToggle.classList.contains('active'),
+        graphPushUrl: graphPushUrlInput.value.trim(),
+        graphPushApiKey: graphPushApiKeyInput.value.trim()
     };
     
     // Validate API URL
     if (settings.apiUrl && !isValidUrl(settings.apiUrl)) {
         showStatus('Please enter a valid URL for the API endpoint.', 'error');
+        return;
+    }
+    
+    // Validate graph push URL if enabled
+    if (settings.graphPushEnabled && settings.graphPushUrl && !isValidUrl(settings.graphPushUrl)) {
+        showStatus('Please enter a valid URL for the graph push endpoint.', 'error');
         return;
     }
     
@@ -161,9 +208,87 @@ async function testApiConnection() {
     }
 }
 
-function showTestResult(message, type) {
-    testResult.textContent = message;
-    testResult.style.color = type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#6c757d';
+async function testGraphPushConnection() {
+    const graphPushUrl = graphPushUrlInput.value.trim();
+    const apiKey = graphPushApiKeyInput.value.trim();
+    
+    if (!graphPushUrl) {
+        showTestGraphPushResult('Please enter a graph push URL first.', 'error');
+        return;
+    }
+    
+    if (!isValidUrl(graphPushUrl)) {
+        showTestGraphPushResult('Please enter a valid URL.', 'error');
+        return;
+    }
+    
+    testGraphPushBtn.disabled = true;
+    testGraphPushBtn.textContent = 'Testing...';
+    showTestGraphPushResult('Testing graph push connection...', 'info');
+    
+    try {
+        // Create sample graph data for testing
+        const testGraphData = {
+            timestamp: new Date().toISOString(),
+            source: 'youtube-learning-extension',
+            version: '1.2',
+            test: true,
+            metadata: {
+                videoId: 'test-video-id',
+                videoTitle: 'Test Video',
+                channelName: 'Test Channel',
+                timestamp: new Date().toISOString(),
+                captionCount: 1,
+                batchId: 0,
+                promptUsed: 'test-prompt'
+            },
+            nodes: [
+                { id: 'test-node-1', label: 'Test Concept 1', type: 'concept' },
+                { id: 'test-node-2', label: 'Test Concept 2', type: 'concept' }
+            ],
+            edges: [
+                { from: 'test-node-1', to: 'test-node-2', label: 'relates to', type: 'relationship' }
+            ],
+            rawTriples: [
+                ['test-concept-1', 'relates to', 'test-concept-2']
+            ]
+        };
+        
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        
+        if (apiKey) {
+            headers['Authorization'] = `Bearer ${apiKey}`;
+        }
+        
+        const response = await fetch(graphPushUrl, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(testGraphData)
+        });
+        
+        if (response.ok) {
+            showTestGraphPushResult('✅ Graph push connection successful!', 'success');
+        } else {
+            const errorText = await response.text();
+            showTestGraphPushResult(`❌ Server returned error: ${response.status} - ${errorText}`, 'error');
+        }
+    } catch (error) {
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            showTestGraphPushResult('❌ Network error: Unable to connect to the graph push server.', 'error');
+        } else {
+            showTestGraphPushResult(`❌ Connection failed: ${error.message}`, 'error');
+        }
+    } finally {
+        testGraphPushBtn.disabled = false;
+        testGraphPushBtn.textContent = 'Test Graph Push';
+    }
+}
+
+function showTestGraphPushResult(message, type) {
+    testGraphPushResult.textContent = message;
+    testGraphPushResult.style.color = type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#6c757d';
 }
 
 function showStatus(message, type) {

@@ -2,7 +2,10 @@
 const DEFAULT_SETTINGS = {
     extensionEnabled: true,
     apiUrl: 'http://localhost:11434/api/chat',
-    apiModel: 'hf.co/LiquidAI/LFM2-8B-A1B-GGUF:LFM2-8B-A1B-Q4_0.gguf'
+    apiModel: 'hf.co/LiquidAI/LFM2-8B-A1B-GGUF:LFM2-8B-A1B-Q4_0.gguf',
+    graphPushEnabled: false,
+    graphPushUrl: '',
+    graphPushApiKey: ''
 };
 
 // DOM elements
@@ -63,6 +66,13 @@ function loadSettings() {
         // Show current API URL
         const url = items.apiUrl || DEFAULT_SETTINGS.apiUrl;
         currentUrl.textContent = `API: ${url}`;
+        
+        // Show graph push status
+        if (items.graphPushEnabled && items.graphPushUrl) {
+            currentUrl.textContent += ` | Graph Push: ON`;
+        } else {
+            currentUrl.textContent += ` | Graph Push: OFF`;
+        }
     });
 }
 
