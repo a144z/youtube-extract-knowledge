@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Caption Bubble",
+  "version": "1.1",
+  "description": "Displays current YouTube captions in a floating bubble with Knowledge Mode toggle.",
+  "permissions": ["activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/watch*"],
+      "js": [
+        "modules/utils.js",
+        "modules/styles.js",
+        "modules/marked.js",
+        "modules/bubble.js",
+        "modules/caption.js",
+        "modules/knowledge-mode.js",
+        "modules/transcript.js",
+        "modules/ui-controls.js",
+        "modules/core.js",
+        "content-modular.js"
+      ],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ]
+}
