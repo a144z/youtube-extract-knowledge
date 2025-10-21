@@ -7,22 +7,24 @@ const KnowledgeModeModule = (function() {
     BubbleModule.updateStatus('waiting', `Processing batch ${batchId}...`);
 
     const selectedPrompt = UtilsModule.systemPrompts[ExtensionState.currentPrompt];
+    const apiUrl = SettingsModule.getApiUrl();
+    const apiModel = SettingsModule.getApiModel();
 
     try {
-      console.log(`Sending batch ${batchId} to Ollama API with ${captionCount} captions`);
+      console.log(`Sending batch ${batchId} to API at ${apiUrl} with ${captionCount} captions`);
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
       
       let response;
       try {
-        response = await fetch('http://localhost:11434/api/chat', {
+        response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'hf.co/LiquidAI/LFM2-8B-A1B-GGUF:LFM2-8B-A1B-Q4_0.gguf',
+            model: apiModel,
             messages: [{ role: 'user', content: selectedPrompt.prompt + text }],
             stream: false,
             options: {
@@ -38,9 +40,9 @@ const KnowledgeModeModule = (function() {
       } catch (fetchError) {
         clearTimeout(timeoutId);
         if (fetchError.name === 'AbortError') {
-          throw new Error('Request timeout - Ollama API took too long to respond');
+          throw new Error('Request timeout - API took too long to respond');
         }
-        throw new Error(`Network error: ${fetchError.message}. Make sure Ollama is running at http://localhost:11434`);
+        throw new Error(`Network error: ${fetchError.message}. Make sure your API is running at ${apiUrl}`);
       }
       
       clearTimeout(timeoutId);
@@ -108,9 +110,11 @@ const KnowledgeModeModule = (function() {
     aiDiv.innerHTML = '<div class="loader"></div>';
 
     const selectedPrompt = UtilsModule.systemPrompts[ExtensionState.currentPrompt];
+    const apiUrl = SettingsModule.getApiUrl();
+    const apiModel = SettingsModule.getApiModel();
 
     try {
-      console.log('Sending request to Ollama API with text:', text);
+      console.log('Sending request to API at', apiUrl, 'with text:', text);
       console.log('Using prompt:', selectedPrompt.prompt);
 
       const controller = new AbortController();
@@ -118,13 +122,13 @@ const KnowledgeModeModule = (function() {
       
       let response;
       try {
-        response = await fetch('http://localhost:11434/api/chat', {
+        response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'hf.co/LiquidAI/LFM2-350M-GGUF:Q4_K_M',
+            model: apiModel,
             messages: [{ role: 'user', content: selectedPrompt.prompt + text }],
             stream: false,
             options: {
@@ -140,9 +144,9 @@ const KnowledgeModeModule = (function() {
       } catch (fetchError) {
         clearTimeout(timeoutId);
         if (fetchError.name === 'AbortError') {
-          throw new Error('Request timeout - Ollama API took too long to respond');
+          throw new Error('Request timeout - API took too long to respond');
         }
-        throw new Error(`Network error: ${fetchError.message}. Make sure Ollama is running at http://localhost:11434`);
+        throw new Error(`Network error: ${fetchError.message}. Make sure your API is running at ${apiUrl}`);
       }
       
       clearTimeout(timeoutId);
@@ -188,7 +192,8 @@ const KnowledgeModeModule = (function() {
           </details>
           <details>
             <summary>Request Details</summary>
-            <pre style="background: #f0f0f0; padding: 10px; margin: 5px 0; overflow-x: auto; font-size: 11px;">Model: hf.co/LiquidAI/LFM2-350M-GGUF:Q4_K_M
+            <pre style="background: #f0f0f0; padding: 10px; margin: 5px 0; overflow-x: auto; font-size: 11px;">API URL: ${apiUrl}
+Model: ${apiModel}
 Prompt: ${selectedPrompt.name}
 Text Length: ${text.length}
 Temperature: 0.7</pre>

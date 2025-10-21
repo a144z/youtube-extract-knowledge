@@ -1,5 +1,6 @@
 const ExtensionState = {
   isInitialized: false,
+  isExtensionEnabled: true, // New: tracks if extension is enabled via settings
   isKnowledgeModeActive: false,
   isBubbleVisible: false,
   currentPrompt: 'definitions',
@@ -24,6 +25,12 @@ const CoreModule = (function() {
 
   function init() {
     if (ExtensionState.isInitialized) return;
+    
+    // Check if extension is enabled via settings
+    if (!SettingsModule.isExtensionEnabled()) {
+      console.log('YouTube Caption Bubble: Extension is disabled via settings');
+      return;
+    }
 
     const player = document.querySelector('#movie_player');
     if (!player) {
