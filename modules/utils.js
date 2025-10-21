@@ -51,6 +51,13 @@ Be bold, creative, and insightful. Look beyond the obvious and help the reader d
 Transcript:`,
       renderer: renderExplore,
     },
+    strange: {
+      name: 'Strange',
+      prompt: `Think out of the box, find ten new terms that are somehow directly or indirectly onnected to the mentioned terms in this transcript and describe their relationship. Output format: "term1(from transcript)-new term: relationship description"
+
+Transcript:`,
+      renderer: renderStrange,
+    },
   };
 
   function cleanCaptionText(text) {
@@ -231,51 +238,68 @@ Transcript:`,
     }
   }
 
-  function parseExploreContent(text) {
-    const sections = [];
-    const lines = text.split('\n');
-    let currentSection = null;
-    
-    for (const line of lines) {
-      const trimmedLine = line.trim();
+  function renderStrange(data, container) {
+    container.innerHTML = '';
+
+    if (typeof data === 'string') {
+      const strangeDiv = document.createElement('div');
+      strangeDiv.className = 'strange-content';
+      strangeDiv.style.fontSize = '14px';
+      strangeDiv.style.lineHeight = '1.5';
+      strangeDiv.style.padding = '12px';
+      strangeDiv.style.backgroundColor = '#f8fafc';
+      strangeDiv.style.border = '1px solid #e2e8f0';
+      strangeDiv.style.borderRadius = '8px';
+      strangeDiv.style.marginTop = '8px';
+
+      // Parse the strange connection format: "term1-new term: relationship"
+      const connectionMatch = data.match(/^(.+?)-(.+?):\s*(.+)$/);
       
-      // Check if this is a section header
-      if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
-        // Save previous section
-        if (currentSection) {
-          sections.push(currentSection);
-        }
+      if (connectionMatch) {
+        const [, originalTerm, newTerm, relationship] = connectionMatch;
         
-        // Start new section
-        currentSection = {
-          title: trimmedLine.replace(/\*\*/g, ''),
-          content: ''
-        };
-      } else if (trimmedLine.startsWith('- **') && trimmedLine.includes('**:')) {
-        // Handle formatted subsections like "- **Key Concepts**:"
-        if (currentSection) {
-          currentSection.content += trimmedLine + '\n';
-        }
-      } else if (trimmedLine && currentSection) {
-        // Add content to current section
-        currentSection.content += trimmedLine + '\n';
+        const originalTermDiv = document.createElement('div');
+        originalTermDiv.style.fontWeight = 'bold';
+        originalTermDiv.style.color = '#1e40af';
+        originalTermDiv.style.marginBottom = '4px';
+        originalTermDiv.textContent = `From transcript: ${originalTerm.trim()}`;
+        
+        const arrowDiv = document.createElement('div');
+        arrowDiv.style.textAlign = 'center';
+        arrowDiv.style.fontSize = '16px';
+        arrowDiv.style.color = '#6b7280';
+        arrowDiv.style.margin = '8px 0';
+        arrowDiv.textContent = '↓';
+        
+        const newTermDiv = document.createElement('div');
+        newTermDiv.style.fontWeight = 'bold';
+        newTermDiv.style.color = '#dc2626';
+        newTermDiv.style.marginBottom = '8px';
+        newTermDiv.textContent = `New term: ${newTerm.trim()}`;
+        
+        const relationshipDiv = document.createElement('div');
+        relationshipDiv.style.fontStyle = 'italic';
+        relationshipDiv.style.color = '#374151';
+        relationshipDiv.style.borderLeft = '3px solid #3b82f6';
+        relationshipDiv.style.paddingLeft = '12px';
+        relationshipDiv.textContent = relationship.trim();
+        
+        strangeDiv.appendChild(originalTermDiv);
+        strangeDiv.appendChild(arrowDiv);
+        strangeDiv.appendChild(newTermDiv);
+        strangeDiv.appendChild(relationshipDiv);
+      } else {
+        // Fallback for non-matching format
+        const fallbackDiv = document.createElement('div');
+        fallbackDiv.style.whiteSpace = 'pre-line';
+        fallbackDiv.textContent = data.trim();
+        strangeDiv.appendChild(fallbackDiv);
       }
+
+      container.appendChild(strangeDiv);
+    } else {
+      container.textContent = 'No strange connection data available.';
     }
-    
-    // Add the last section
-    if (currentSection) {
-      sections.push(currentSection);
-    }
-    
-    // If no structured sections found, create a single section with all content
-    if (sections.length === 0) {
-      sections.push({
-        title: 'Exploration Insights',
-        content: text
-      });
-    }
-    
-    return sections;
   }
 
   function parseTuples(text) {

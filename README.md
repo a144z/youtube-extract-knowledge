@@ -13,6 +13,7 @@ A Chrome extension that enhances YouTube learning by providing AI-powered explan
   - **Diagrams**: Visual representations of concepts and relationships
   - **Graphs**: Interactive knowledge graphs with nodes and edges
   - **Explore**: Creative discovery of hidden connections and novel insights
+  - **Strange**: Generate one unexpected term connected to transcript content with relationship description
 
 ### 🎯 **Interactive Graph Visualization**
 - **Real-time Graph Rendering**: Live D3.js visualization of knowledge graphs
@@ -135,7 +136,7 @@ Example Ollama configuration:
 3. **Navigate to YouTube**: Go to any YouTube video
 4. **Enable Knowledge Mode**: Click inside the Youtube player toggle "Knowledge Mode"(next to Caption button after installed)
 5. **View Explanations**: Captions will be processed and displayed in the floating bubble
-6. **Switch Modes**: Use the mode selector to switch between definitions, diagrams, graphs, and explore modes
+6. **Switch Modes**: Use the mode selector to switch between definitions, diagrams, graphs, explore, and strange modes
 
 *Note: Do not turn off caption, this extension require caption to be on
 
@@ -161,6 +162,14 @@ Example Ollama configuration:
    - **Cross-Domain Links**: Connections to other fields and disciplines
    - **Exploration Questions**: Thought-provoking questions for deeper investigation
 3. **Creative Thinking**: The AI acts as a polymath, detective, and creative thinker to help you discover connections you never considered
+
+### Strange Mode
+
+1. **Select Strange Mode**: Choose "🌀 Strange" from the mode selector
+2. **Generate Unexpected Connections**: AI finds one new term connected to transcript content
+3. **Simple Format**: Output follows the pattern "term1(from transcript)-new term: relationship description"
+4. **Creative Associations**: Discover surprising connections between transcript terms and unexpected concepts
+5. **Visual Display**: Clean, structured presentation showing the original term, new term, and their relationship
 
 ### Manual Graph Push
 
