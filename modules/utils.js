@@ -53,7 +53,7 @@ Transcript:`,
     },
     strange: {
       name: 'Strange',
-      prompt: `Think out of the box, find ten new terms that are somehow directly or indirectly onnected to the mentioned terms in this transcript and describe their relationship. Output format: "term1(from transcript)-term2(new term): relationship description"
+      prompt: `Brainstorm 5 creative new terms that are connected to the mentioned terms in this transcript (direct or indirect connections). Keep descriptions concise (1 short phrase). Output strictly as: "new_term-transcript_term: brief relationship" (one per line, no verb netweeh transcript and new term, no extras)."
 
 Transcript:`,
       renderer: renderStrange,
