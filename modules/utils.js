@@ -53,7 +53,9 @@ Transcript:`,
     },
     strange: {
       name: 'Strange',
-      prompt: `Brainstorm 5 creative new terms that are connected to the mentioned terms in this transcript (direct or indirect connections). Keep descriptions concise (1 short phrase). Output strictly as: "new_term-transcript_term: brief relationship" (one per line, no verb netweeh transcript and new term, no extras)."
+      prompt: `Brainstorm 5 creative new terms connected to terms in this transcript (direct or indirect links). Describe each in one short phrase. Output strictly as: "new_term-transcript_term: brief relationship" (one per line, no verbs between terms, no extras).Then, separately brainstorm 5 fun facts(only weirdo knows, sounds crazy) related to the transcript terms (1-2 phrases each). Output strictly as: "Fun Fact 1: [fact]" (one per line, no extras). Must be 5 fun facts no less or more
+
+"
 
 Transcript:`,
       renderer: renderStrange,
